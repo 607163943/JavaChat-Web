@@ -1,0 +1,437 @@
+@import 'tailwindcss';
+
+/* ============================================
+   JavaChat — Kimi-Inspired Design System
+   Colors: Clean Blue accent (no purple/indigo)
+   Theme: Deep dark background
+   ============================================ */
+
+@theme {
+  /* === Accent — Clean Blue (Kimi-style) === */
+  --color-primary: #2563EB;
+  --color-primary-hover: #3B82F6;
+
+  /* === Surfaces — Deep Dark Theme === */
+  --color-surface: #0D0D0D;
+  --color-surface-alt: #141414;
+  --color-surface-sidebar: #111111;
+  --color-surface-hover: rgba(255, 255, 255, 0.05);
+  --color-surface-active: rgba(255, 255, 255, 0.08);
+  --color-surface-input: #1A1A1A;
+  --color-surface-card: #161616;
+  --color-surface-tooltip: #1E1E1E;
+
+  /* === Content / Text === */
+  --color-content: #EFEFEF;
+  --color-content-dim: #A0A0A0;
+  --color-content-muted: #666666;
+  --color-content-inverse: #0D0D0D;
+
+  /* === Borders === */
+  --color-edge: rgba(255, 255, 255, 0.06);
+  --color-edge-hover: rgba(255, 255, 255, 0.12);
+
+  /* === Status === */
+  --color-ok: #34D399;
+  --color-warn: #FBBF24;
+  --color-danger: #F87171;
+
+  /* === Fonts — Kimi System Font Stack === */
+  --font-sans: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Consolas',
+    'Courier New', monospace;
+
+  /* === Animations === */
+  --animate-fade-in: fade-in 0.3s ease;
+  --animate-pulse-dot: pulse-dot 1.5s infinite;
+  --animate-typing: typing 1.4s infinite;
+}
+
+/* === Keyframes === */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes typing {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* ============================================
+   Global Base Styles
+   ============================================ */
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--color-content);
+  background: var(--color-surface);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+input,
+textarea {
+  font-family: inherit;
+  color: inherit;
+  font-size: inherit;
+}
+
+ul, ol { list-style: none; }
+img { max-width: 100%; display: block; }
+
+/* === Scrollbar === */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+
+::selection {
+  background: rgba(37, 99, 235, 0.3);
+  color: var(--color-content);
+}
+
+/* ============================================
+   DevUI / MateChat — Comprehensive Dark Theme
+   ============================================ */
+
+:root {
+  /* --- 核心背景 --- */
+  --devui-base-bg: #0D0D0D;
+  --devui-base-bg-dark: #111111;
+  --devui-global-bg: #161616;
+  --devui-global-bg-normal: #1A1A1A;
+
+  /* --- 文字 --- */
+  --devui-text: #EFEFEF;
+  --devui-text-weak: #A0A0A0;
+  --devui-aide-text: #888888;
+  --devui-aide-text-stress: #999999;
+  --devui-placeholder: #666666;
+  --devui-light-text: #ffffff;
+  --devui-disabled-text: #555555;
+
+  /* --- 主色（按钮 / 强调） --- */
+  --devui-primary: #2563EB;
+  --devui-primary-hover: #3B82F6;
+  --devui-primary-active: #1D4ED8;
+  --devui-primary-disabled: rgba(37, 99, 235, 0.4);
+  --devui-brand: #2563EB;
+  --devui-brand-hover: #3B82F6;
+  --devui-brand-active: #1D4ED8;
+
+  /* --- 表单控件 --- */
+  --devui-form-control-bg: #1A1A1A;
+  --devui-form-control-line: rgba(255, 255, 255, 0.08);
+  --devui-form-control-line-hover: rgba(255, 255, 255, 0.15);
+  --devui-form-control-line-active: #2563EB;
+
+  /* --- 线条 / 分割线 --- */
+  --devui-line: rgba(255, 255, 255, 0.06);
+  --devui-dividing-line: rgba(255, 255, 255, 0.06);
+
+  /* --- 区块 / 区域 --- */
+  --devui-block: #1A1A1A;
+  --devui-area: #141414;
+  --devui-disabled-bg: #1A1A1A;
+
+  /* --- 列表交互 --- */
+  --devui-list-item-hover-bg: rgba(255, 255, 255, 0.05);
+  --devui-list-item-active-bg: rgba(255, 255, 255, 0.08);
+  --devui-list-item-selected-bg: rgba(37, 99, 235, 0.15);
+
+  /* --- 图标 --- */
+  --devui-icon-fill: #A0A0A0;
+  --devui-icon-hover-bg: rgba(255, 255, 255, 0.05);
+
+  /* --- 链接 --- */
+  --devui-link: #2563EB;
+  --devui-link-active: #3B82F6;
+
+  /* --- 状态色 --- */
+  --devui-danger: #F87171;
+  --devui-warning: #FBBF24;
+  --devui-success: #34D399;
+  --devui-info: #60A5FA;
+
+  /* --- 阴影 --- */
+  --devui-shadow: rgba(0, 0, 0, 0.5);
+  --devui-light-shadow: rgba(0, 0, 0, 0.3);
+  --devui-hover-shadow: rgba(0, 0, 0, 0.3);
+  --devui-connected-overlay-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --devui-feedback-overlay-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --devui-connected-overlay-bg: #1E1E1E;
+
+  /* --- 灰色表单背景（McList filled 变体用） --- */
+  --devui-gray-form-control-bg: #1A1A1A;
+
+  /* --- 列表文字 --- */
+  --devui-list-item-hover-text: #EFEFEF;
+  --devui-list-item-active-text: #EFEFEF;
+
+  /* --- 动画 --- */
+  --devui-animation-duration-fast: 0.1s;
+  --devui-animation-duration-slow: 0.3s;
+  --devui-animation-ease-in-out-smooth: cubic-bezier(.645, .045, .355, 1);
+
+  /* --- 杂项 --- */
+  --devui-border-radius: 10px;
+  --devui-font-size: 14px;
+  --devui-font-size-sm: 12px;
+  --devui-font-size-card-title: 15px;
+  --devui-font-content-weight: normal;
+  --devui-font-title-weight: bold;
+}
+
+/* ============================================
+   MateChat Component Dark Theme Overrides
+   （基于组件真实 CSS 类名修复）
+   ============================================ */
+
+/* --- McInput 输入框 --- */
+.mc-input {
+  background-color: #1A1A1A !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.mc-input:focus-within {
+  border-color: #2563EB !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+.mc-textarea,
+.editable-container {
+  background-color: #1A1A1A !important;
+  background: #1A1A1A !important;
+  color: #EFEFEF !important;
+  caret-color: #EFEFEF !important;
+}
+
+.mc-textarea::placeholder,
+.editable-container[placeholder]:empty:before {
+  color: #666666 !important;
+}
+
+/* 发送按钮 */
+.mc-button {
+  background-color: #2563EB !important;
+}
+
+.mc-button:hover {
+  background-color: #3B82F6 !important;
+}
+
+.mc-button:active {
+  background-color: #1D4ED8 !important;
+}
+
+.mc-button:disabled {
+  background-color: rgba(37, 99, 235, 0.4) !important;
+}
+
+.mc-button svg path {
+  fill: #ffffff !important;
+}
+
+/* 输入框底部 */
+.mc-input .mc-input-foot .mc-input-foot-left .mc-input-foot-count {
+  color: #666666 !important;
+}
+
+/* --- McBubble 消息气泡 --- */
+.mc-bubble .mc-bubble-content.filled {
+  background-color: #161616 !important;
+  color: #EFEFEF !important;
+}
+
+.mc-bubble .mc-bubble-content.bordered {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #EFEFEF !important;
+}
+
+.mc-bubble.mc-bubble-right .mc-bubble-content.filled {
+  background-color: #2563EB !important;
+  color: #ffffff !important;
+}
+
+.mc-bubble.mc-bubble-right .mc-bubble-content.bordered {
+  background-color: rgba(37, 99, 235, 0.15) !important;
+  border-color: rgba(37, 99, 235, 0.3) !important;
+  color: #EFEFEF !important;
+}
+
+/* loading 点（覆盖硬编码紫色） */
+.mc-bubble-loading .loading-dot {
+  background-color: #2563EB !important;
+}
+
+/* --- McIntroduction 介绍 --- */
+.mc-introduction {
+  color: #EFEFEF !important;
+}
+
+.mc-introduction .mc-introduction-title {
+  color: #EFEFEF !important;
+}
+
+.mc-introduction .mc-introduction-sub-title {
+  color: #A0A0A0 !important;
+}
+
+.mc-introduction .mc-introduction-description {
+  color: #A0A0A0 !important;
+}
+
+.mc-introduction.filled {
+  background-color: #161616 !important;
+}
+
+/* --- McPrompt 快捷提问 --- */
+.mc-prompt-item {
+  background-color: #161616 !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  color: #EFEFEF !important;
+}
+
+.mc-prompt-item:hover {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.mc-prompt-item .mc-prompt-item-content .mc-prompt-item-label {
+  color: #EFEFEF !important;
+}
+
+.mc-prompt-item .mc-prompt-item-content .mc-prompt-item-description {
+  color: #888888 !important;
+}
+
+/* --- McList 列表（McPrompt 内部组件） --- */
+.mc-list .mc-list-item {
+  color: #EFEFEF !important;
+  background-color: transparent !important;
+}
+
+.mc-list .mc-list-item.filled {
+  background-color: #161616 !important;
+}
+
+.mc-list .mc-list-item.bordered {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  background-color: #161616 !important;
+}
+
+.mc-list .mc-list-item:hover,
+.mc-list .mc-list-item.mc-list-item-pre-selection {
+  color: #EFEFEF !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.mc-list .mc-list-item.mc-list-item-active {
+  color: #EFEFEF !important;
+  background-color: rgba(37, 99, 235, 0.15) !important;
+}
+
+/* --- McMarkdownCard Markdown 渲染 --- */
+.mc-markdown-render {
+  color: #EFEFEF !important;
+}
+
+.mc-markdown-render td,
+.mc-markdown-render th {
+  background-color: #161616 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  color: #EFEFEF !important;
+}
+
+.mc-markdown-render th {
+  background-color: #1A1A1A !important;
+}
+
+.mc-markdown-render blockquote {
+  border-left-color: #2563EB !important;
+  color: #A0A0A0 !important;
+}
+
+.mc-markdown-render a {
+  color: #2563EB !important;
+}
+
+.mc-markdown-render a:hover {
+  color: #3B82F6 !important;
+}
+
+/* ============================================
+   Vue Transition Helpers
+   ============================================ */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.25s ease;
+}
+
+.slide-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}
