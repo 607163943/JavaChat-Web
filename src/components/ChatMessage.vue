@@ -14,13 +14,13 @@ const userAvatarSvg =
 const aiAvatar = {
   imgSrc: `data:image/svg+xml,${encodeURIComponent(aiAvatarSvg)}`,
   width: 32,
-  height: 32,
+  height: 32
 }
 
 const userAvatar = {
   imgSrc: `data:image/svg+xml,${encodeURIComponent(userAvatarSvg)}`,
   width: 32,
-  height: 32,
+  height: 32
 }
 </script>
 

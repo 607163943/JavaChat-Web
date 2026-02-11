@@ -5,7 +5,8 @@ import { useChatStore } from '@/stores/chat'
 const chatStore = useChatStore()
 const inputValue = ref('')
 
-function handleSubmit(text: string) {
+// 提交消息
+const handleSubmit = async (text: string) => {
   const content = typeof text === 'string' ? text.trim() : inputValue.value.trim()
   if (!content || chatStore.isGenerating) return
   inputValue.value = ''
@@ -16,8 +17,9 @@ function handleChange(val: string) {
   inputValue.value = val
 }
 
+// 停止生成
 function handleCancel() {
-  // 停止生成（预留功能）
+  chatStore.cancelGenerate()
 }
 </script>
 
@@ -41,9 +43,7 @@ function handleCancel() {
               附件
             </span>
           </div>
-          <span class="text-content-muted opacity-60">
-            JavaChat 可能会犯错，请核实重要信息
-          </span>
+          <span class="text-content-muted opacity-60"> JavaChat 可能会犯错，请核实重要信息 </span>
         </div>
       </template>
     </McInput>

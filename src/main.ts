@@ -5,12 +5,11 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import MateChat from '@matechat/core';
+import MateChat from '@matechat/core'
 
-import '@devui-design/icons/icomoon/devui-icon.css';
+import '@devui-design/icons/icomoon/devui-icon.css'
 
 const app = createApp(App)
-
 
 app.use(createPinia())
 app.use(router)

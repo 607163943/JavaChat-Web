@@ -8,39 +8,40 @@
 
 @theme {
   /* === Accent — Clean Blue (Kimi-style) === */
-  --color-primary: #2563EB;
-  --color-primary-hover: #3B82F6;
+  --color-primary: #2563eb;
+  --color-primary-hover: #3b82f6;
 
   /* === Surfaces — Deep Dark Theme === */
-  --color-surface: #0D0D0D;
+  --color-surface: #0d0d0d;
   --color-surface-alt: #141414;
   --color-surface-sidebar: #111111;
   --color-surface-hover: rgba(255, 255, 255, 0.05);
   --color-surface-active: rgba(255, 255, 255, 0.08);
-  --color-surface-input: #1A1A1A;
+  --color-surface-input: #1a1a1a;
   --color-surface-card: #161616;
-  --color-surface-tooltip: #1E1E1E;
+  --color-surface-tooltip: #1e1e1e;
 
   /* === Content / Text === */
-  --color-content: #EFEFEF;
-  --color-content-dim: #A0A0A0;
+  --color-content: #efefef;
+  --color-content-dim: #a0a0a0;
   --color-content-muted: #666666;
-  --color-content-inverse: #0D0D0D;
+  --color-content-inverse: #0d0d0d;
 
   /* === Borders === */
   --color-edge: rgba(255, 255, 255, 0.06);
   --color-edge-hover: rgba(255, 255, 255, 0.12);
 
   /* === Status === */
-  --color-ok: #34D399;
-  --color-warn: #FBBF24;
-  --color-danger: #F87171;
+  --color-ok: #34d399;
+  --color-warn: #fbbf24;
+  --color-danger: #f87171;
 
   /* === Fonts — Kimi System Font Stack === */
-  --font-sans: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Consolas',
-    'Courier New', monospace;
+  --font-sans:
+    'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:
+    'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Courier New', monospace;
 
   /* === Animations === */
   --animate-fade-in: fade-in 0.3s ease;
@@ -50,19 +51,36 @@
 
 /* === Keyframes === */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes typing {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
 }
 
 /* ============================================
@@ -119,14 +137,30 @@ textarea {
   font-size: inherit;
 }
 
-ul, ol { list-style: none; }
-img { max-width: 100%; display: block; }
+ul,
+ol {
+  list-style: none;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
 
 /* === Scrollbar === */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
 ::selection {
   background: rgba(37, 99, 235, 0.3);
@@ -139,14 +173,14 @@ img { max-width: 100%; display: block; }
 
 :root {
   /* --- 核心背景 --- */
-  --devui-base-bg: #0D0D0D;
+  --devui-base-bg: #0d0d0d;
   --devui-base-bg-dark: #111111;
   --devui-global-bg: #161616;
-  --devui-global-bg-normal: #1A1A1A;
+  --devui-global-bg-normal: #1a1a1a;
 
   /* --- 文字 --- */
-  --devui-text: #EFEFEF;
-  --devui-text-weak: #A0A0A0;
+  --devui-text: #efefef;
+  --devui-text-weak: #a0a0a0;
   --devui-aide-text: #888888;
   --devui-aide-text-stress: #999999;
   --devui-placeholder: #666666;
@@ -154,28 +188,28 @@ img { max-width: 100%; display: block; }
   --devui-disabled-text: #555555;
 
   /* --- 主色（按钮 / 强调） --- */
-  --devui-primary: #2563EB;
-  --devui-primary-hover: #3B82F6;
-  --devui-primary-active: #1D4ED8;
+  --devui-primary: #2563eb;
+  --devui-primary-hover: #3b82f6;
+  --devui-primary-active: #1d4ed8;
   --devui-primary-disabled: rgba(37, 99, 235, 0.4);
-  --devui-brand: #2563EB;
-  --devui-brand-hover: #3B82F6;
-  --devui-brand-active: #1D4ED8;
+  --devui-brand: #2563eb;
+  --devui-brand-hover: #3b82f6;
+  --devui-brand-active: #1d4ed8;
 
   /* --- 表单控件 --- */
-  --devui-form-control-bg: #1A1A1A;
+  --devui-form-control-bg: #1a1a1a;
   --devui-form-control-line: rgba(255, 255, 255, 0.08);
   --devui-form-control-line-hover: rgba(255, 255, 255, 0.15);
-  --devui-form-control-line-active: #2563EB;
+  --devui-form-control-line-active: #2563eb;
 
   /* --- 线条 / 分割线 --- */
   --devui-line: rgba(255, 255, 255, 0.06);
   --devui-dividing-line: rgba(255, 255, 255, 0.06);
 
   /* --- 区块 / 区域 --- */
-  --devui-block: #1A1A1A;
+  --devui-block: #1a1a1a;
   --devui-area: #141414;
-  --devui-disabled-bg: #1A1A1A;
+  --devui-disabled-bg: #1a1a1a;
 
   /* --- 列表交互 --- */
   --devui-list-item-hover-bg: rgba(255, 255, 255, 0.05);
@@ -183,18 +217,18 @@ img { max-width: 100%; display: block; }
   --devui-list-item-selected-bg: rgba(37, 99, 235, 0.15);
 
   /* --- 图标 --- */
-  --devui-icon-fill: #A0A0A0;
+  --devui-icon-fill: #a0a0a0;
   --devui-icon-hover-bg: rgba(255, 255, 255, 0.05);
 
   /* --- 链接 --- */
-  --devui-link: #2563EB;
-  --devui-link-active: #3B82F6;
+  --devui-link: #2563eb;
+  --devui-link-active: #3b82f6;
 
   /* --- 状态色 --- */
-  --devui-danger: #F87171;
-  --devui-warning: #FBBF24;
-  --devui-success: #34D399;
-  --devui-info: #60A5FA;
+  --devui-danger: #f87171;
+  --devui-warning: #fbbf24;
+  --devui-success: #34d399;
+  --devui-info: #60a5fa;
 
   /* --- 阴影 --- */
   --devui-shadow: rgba(0, 0, 0, 0.5);
@@ -202,19 +236,19 @@ img { max-width: 100%; display: block; }
   --devui-hover-shadow: rgba(0, 0, 0, 0.3);
   --devui-connected-overlay-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   --devui-feedback-overlay-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --devui-connected-overlay-bg: #1E1E1E;
+  --devui-connected-overlay-bg: #1e1e1e;
 
   /* --- 灰色表单背景（McList filled 变体用） --- */
-  --devui-gray-form-control-bg: #1A1A1A;
+  --devui-gray-form-control-bg: #1a1a1a;
 
   /* --- 列表文字 --- */
-  --devui-list-item-hover-text: #EFEFEF;
-  --devui-list-item-active-text: #EFEFEF;
+  --devui-list-item-hover-text: #efefef;
+  --devui-list-item-active-text: #efefef;
 
   /* --- 动画 --- */
   --devui-animation-duration-fast: 0.1s;
   --devui-animation-duration-slow: 0.3s;
-  --devui-animation-ease-in-out-smooth: cubic-bezier(.645, .045, .355, 1);
+  --devui-animation-ease-in-out-smooth: cubic-bezier(0.645, 0.045, 0.355, 1);
 
   /* --- 杂项 --- */
   --devui-border-radius: 10px;
@@ -232,21 +266,21 @@ img { max-width: 100%; display: block; }
 
 /* --- McInput 输入框 --- */
 .mc-input {
-  background-color: #1A1A1A !important;
+  background-color: #1a1a1a !important;
   border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 .mc-input:focus-within {
-  border-color: #2563EB !important;
+  border-color: #2563eb !important;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
 }
 
 .mc-textarea,
 .editable-container {
-  background-color: #1A1A1A !important;
-  background: #1A1A1A !important;
-  color: #EFEFEF !important;
-  caret-color: #EFEFEF !important;
+  background-color: #1a1a1a !important;
+  background: #1a1a1a !important;
+  color: #efefef !important;
+  caret-color: #efefef !important;
 }
 
 .mc-textarea::placeholder,
@@ -256,15 +290,15 @@ img { max-width: 100%; display: block; }
 
 /* 发送按钮 */
 .mc-button {
-  background-color: #2563EB !important;
+  background-color: #2563eb !important;
 }
 
 .mc-button:hover {
-  background-color: #3B82F6 !important;
+  background-color: #3b82f6 !important;
 }
 
 .mc-button:active {
-  background-color: #1D4ED8 !important;
+  background-color: #1d4ed8 !important;
 }
 
 .mc-button:disabled {
@@ -283,45 +317,45 @@ img { max-width: 100%; display: block; }
 /* --- McBubble 消息气泡 --- */
 .mc-bubble .mc-bubble-content.filled {
   background-color: #161616 !important;
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-bubble .mc-bubble-content.bordered {
   border-color: rgba(255, 255, 255, 0.06) !important;
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-bubble.mc-bubble-right .mc-bubble-content.filled {
-  background-color: #2563EB !important;
+  background-color: #2563eb !important;
   color: #ffffff !important;
 }
 
 .mc-bubble.mc-bubble-right .mc-bubble-content.bordered {
   background-color: rgba(37, 99, 235, 0.15) !important;
   border-color: rgba(37, 99, 235, 0.3) !important;
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 /* loading 点（覆盖硬编码紫色） */
 .mc-bubble-loading .loading-dot {
-  background-color: #2563EB !important;
+  background-color: #2563eb !important;
 }
 
 /* --- McIntroduction 介绍 --- */
 .mc-introduction {
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-introduction .mc-introduction-title {
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-introduction .mc-introduction-sub-title {
-  color: #A0A0A0 !important;
+  color: #a0a0a0 !important;
 }
 
 .mc-introduction .mc-introduction-description {
-  color: #A0A0A0 !important;
+  color: #a0a0a0 !important;
 }
 
 .mc-introduction.filled {
@@ -336,7 +370,7 @@ img { max-width: 100%; display: block; }
   padding: 12px 16px !important;
   cursor: pointer !important;
   transition: all 0.15s ease !important;
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-prompt-item:hover {
@@ -345,7 +379,7 @@ img { max-width: 100%; display: block; }
 }
 
 .mc-prompt-item .mc-prompt-item-content .mc-prompt-item-label {
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-prompt-item .mc-prompt-item-content .mc-prompt-item-description {
@@ -354,7 +388,7 @@ img { max-width: 100%; display: block; }
 
 /* --- McList 列表（McPrompt 内部组件） --- */
 .mc-list .mc-list-item {
-  color: #EFEFEF !important;
+  color: #efefef !important;
   background-color: transparent !important;
 }
 
@@ -369,42 +403,42 @@ img { max-width: 100%; display: block; }
 
 .mc-list .mc-list-item:hover,
 .mc-list .mc-list-item.mc-list-item-pre-selection {
-  color: #EFEFEF !important;
+  color: #efefef !important;
   background-color: rgba(255, 255, 255, 0.05) !important;
 }
 
 .mc-list .mc-list-item.mc-list-item-active {
-  color: #EFEFEF !important;
+  color: #efefef !important;
   background-color: rgba(37, 99, 235, 0.15) !important;
 }
 
 /* --- McMarkdownCard Markdown 渲染 --- */
 .mc-markdown-render {
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-markdown-render td,
 .mc-markdown-render th {
   background-color: #161616 !important;
   border-color: rgba(255, 255, 255, 0.06) !important;
-  color: #EFEFEF !important;
+  color: #efefef !important;
 }
 
 .mc-markdown-render th {
-  background-color: #1A1A1A !important;
+  background-color: #1a1a1a !important;
 }
 
 .mc-markdown-render blockquote {
-  border-left-color: #2563EB !important;
-  color: #A0A0A0 !important;
+  border-left-color: #2563eb !important;
+  color: #a0a0a0 !important;
 }
 
 .mc-markdown-render a {
-  color: #2563EB !important;
+  color: #2563eb !important;
 }
 
 .mc-markdown-render a:hover {
-  color: #3B82F6 !important;
+  color: #3b82f6 !important;
 }
 
 /* ============================================

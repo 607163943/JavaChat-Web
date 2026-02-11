@@ -7,9 +7,9 @@ const router = createRouter({
     {
       path: '/',
       name: 'chat',
-      component: ChatView,
-    },
-  ],
+      component: ChatView
+    }
+  ]
 })
 
 export default router

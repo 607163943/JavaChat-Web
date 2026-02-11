@@ -59,10 +59,7 @@ function formatTime(timestamp: number): string {
 
       <!-- 对话列表 -->
       <div class="flex-1 overflow-y-auto px-2 py-1">
-        <div
-          v-if="chatStore.sortedConversations.length === 0"
-          class="py-10 px-5 text-center"
-        >
+        <div v-if="chatStore.sortedConversations.length === 0" class="py-10 px-5 text-center">
           <p class="text-content-muted text-sm mb-1">暂无对话</p>
           <p class="text-content-muted text-xs opacity-60">点击上方按钮开始新对话</p>
         </div>
@@ -81,18 +78,14 @@ function formatTime(timestamp: number): string {
           <div
             class="shrink-0 flex items-center"
             :class="
-              conv.id === chatStore.activeConversationId
-                ? 'text-primary'
-                : 'text-content-muted'
+              conv.id === chatStore.activeConversationId ? 'text-primary' : 'text-content-muted'
             "
           >
             <IconChat />
           </div>
           <div class="flex-1 min-w-0 flex flex-col gap-0.5">
             <span class="text-[13px] text-content truncate">{{ conv.title }}</span>
-            <span class="text-[11px] text-content-muted">{{
-              formatTime(conv.updatedAt)
-            }}</span>
+            <span class="text-[11px] text-content-muted">{{ formatTime(conv.updatedAt) }}</span>
           </div>
           <button
             class="shrink-0 opacity-0 group-hover:opacity-100 text-content-muted p-1 rounded-md flex items-center cursor-pointer bg-transparent border-none transition-all duration-150 hover:text-danger hover:bg-danger/10"

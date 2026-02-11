@@ -15,8 +15,13 @@ const hasMessages = computed(() => {
 const aiAvatar = {
   imgSrc: `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" rx="8" fill="#2563EB"/><text x="16" y="22" font-family="sans-serif" font-size="16" font-weight="700" fill="white" text-anchor="middle">J</text></svg>')}`,
   width: 32,
-  height: 32,
+  height: 32
 }
+
+const showGenerating = computed(() => {
+  const last = chatStore.activeConversation?.messages.at(-1)
+  return chatStore.isGenerating && last?.role !== 'assistant'
+})
 
 // 自动滚动到底部
 watch(
@@ -24,7 +29,15 @@ watch(
   async () => {
     await nextTick()
     scrollToBottom()
-  },
+  }
+)
+
+watch(
+  () => chatStore.activeConversation?.messages.at(-1)?.content,
+  async () => {
+    await nextTick()
+    scrollToBottom()
+  }
 )
 
 function scrollToBottom() {
@@ -47,7 +60,7 @@ function scrollToBottom() {
         />
 
         <!-- 生成中状态 -->
-        <div v-if="chatStore.isGenerating" class="py-1 animate-fade-in">
+        <div v-if="showGenerating" class="py-1 animate-fade-in">
           <McBubble :loading="true" :avatarConfig="aiAvatar" />
         </div>
       </div>

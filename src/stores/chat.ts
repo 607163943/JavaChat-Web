@@ -1,6 +1,9 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { chatGetConversationIdService } from '@/api/chat'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 
+// 消息
 export interface Message {
   id: string
   role: 'user' | 'assistant'
@@ -8,6 +11,7 @@ export interface Message {
   timestamp: number
 }
 
+// 对话
 export interface Conversation {
   id: string
   title: string
@@ -17,11 +21,28 @@ export interface Conversation {
 }
 
 export const useChatStore = defineStore('chat', () => {
+  // 对话列表
   const conversations = ref<Conversation[]>([])
+  // 当前激活对话id
   const activeConversationId = ref<string | null>(null)
+  // 侧边栏是否打开
   const sidebarOpen = ref(true)
+  // 是否正在生成
   const isGenerating = ref(false)
 
+  // 流式请求控制器(用于中断请求)
+  let currentAbortController: AbortController | null = null
+
+  // 取消AI当前任务(中断请求)
+  const cancelGenerate = () => {
+    if (currentAbortController) {
+      currentAbortController.abort()
+      currentAbortController = null
+    }
+    isGenerating.value = false
+  }
+
+  // 当前激活对话
   const activeConversation = computed(() => {
     if (!activeConversationId.value) return null
     return conversations.value.find((c) => c.id === activeConversationId.value) ?? null
@@ -31,19 +52,24 @@ export const useChatStore = defineStore('chat', () => {
     return [...conversations.value].sort((a, b) => b.updatedAt - a.updatedAt)
   })
 
-  function generateId(): string {
+  const generateId = (): string => {
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 8)
   }
 
-  function createConversation(firstMessage?: string): string {
-    const id = generateId()
+  // 创建对话
+  const createConversation = async (firstMessage?: string): Promise<string> => {
+    // 获取对话id
+    const res = await chatGetConversationIdService()
+    const id = res.data.data
     const now = Date.now()
     const conversation: Conversation = {
       id,
-      title: firstMessage ? firstMessage.slice(0, 30) + (firstMessage.length > 30 ? '...' : '') : '新对话',
+      title: firstMessage
+        ? firstMessage.slice(0, 30) + (firstMessage.length > 30 ? '...' : '')
+        : '新对话',
       messages: [],
       createdAt: now,
-      updatedAt: now,
+      updatedAt: now
     }
     conversations.value.unshift(conversation)
     activeConversationId.value = id
@@ -64,7 +90,8 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  function addMessage(conversationId: string, role: 'user' | 'assistant', content: string) {
+  // 添加聊天气泡
+  const addMessage = (conversationId: string, role: 'user' | 'assistant', content: string) => {
     const conversation = conversations.value.find((c) => c.id === conversationId)
     if (!conversation) return
 
@@ -72,7 +99,7 @@ export const useChatStore = defineStore('chat', () => {
       id: generateId(),
       role,
       content,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     }
     conversation.messages.push(message)
     conversation.updatedAt = Date.now()
@@ -83,28 +110,76 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  async function sendMessage(content: string) {
-    let convId = activeConversationId.value
-    if (!convId) {
-      convId = createConversation(content)
+  // 发送用户请求消息
+  const sendMessage = async (content: string) => {
+    // 如果正在生成，先取消上一次（避免并发串台）
+    cancelGenerate()
+    let conversationId = activeConversationId.value
+    if (!conversationId) {
+      conversationId = await createConversation(content)
     }
 
-    addMessage(convId, 'user', content)
+    addMessage(conversationId, 'user', content)
     isGenerating.value = true
 
-    // 模拟 AI 回复
-    await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 2000))
+    // AI回复
+    const conversation = conversations.value.find((c) => c.id === conversationId)
+    if (!conversation) {
+      isGenerating.value = false
+      return
+    }
 
-    const replies = [
-      '你好！我是 JavaChat 智能助手，很高兴为你服务。请问有什么我可以帮助你的吗？',
-      '这是一个很好的问题！让我来为你详细分析一下...\n\n首先，我们需要了解问题的核心。这个话题涉及多个方面，我会从以下几个维度来解答：\n\n1. **基础概念**：确保我们对问题有共同的理解\n2. **深入分析**：探讨问题的本质和关键因素\n3. **实践建议**：提供可操作的解决方案\n\n希望这些信息对你有帮助！如有更多问题，随时提问。',
-      '根据你的描述，我理解你想了解的是这方面的内容。\n\n以下是我的分析：\n\n> 关键要点：在处理这类问题时，最重要的是理解上下文和目标。\n\n让我用一个简单的例子来说明：\n\n```python\ndef solve_problem(context, goal):\n    analysis = analyze(context)\n    solution = generate_solution(analysis, goal)\n    return optimize(solution)\n```\n\n这个框架可以帮助你系统地思考和解决问题。还有什么需要我进一步说明的吗？',
-      '当然可以！让我来帮你解答这个问题。\n\n这是一个常见的场景，有多种方法可以处理。最推荐的做法是：\n\n- ✅ 明确需求和目标\n- ✅ 选择合适的技术方案\n- ✅ 分步实施和验证\n- ✅ 持续优化和改进\n\n如果你需要更具体的指导，请告诉我更多细节，我会提供更有针对性的建议。',
-    ]
+    // 关键：先插入一条 assistant 占位消息，后续不断追加 content
+    const assistantMsg: Message = {
+      id: generateId(),
+      role: 'assistant',
+      content: '',
+      timestamp: Date.now()
+    }
+    conversation.messages.push(assistantMsg)
+    conversation.updatedAt = Date.now()
 
-    const reply = replies[Math.floor(Math.random() * replies.length)]
-    addMessage(convId, 'assistant', reply)
-    isGenerating.value = false
+    const ac = new AbortController()
+    currentAbortController = ac
+
+    try {
+      const appendDelta = (delta: string) => {
+        if (!delta) return
+        conversation.updatedAt = Date.now()
+        // 找到会话中旧聊天记录进行内容更新
+        const messages = conversation.messages.filter((m) => m.id === assistantMsg.id)[0]
+        if (messages) {
+          messages.content += delta
+        }
+      }
+
+      await fetchEventSource('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId, prompt: content }),
+        signal: ac.signal,
+
+        onmessage(ev) {
+          // ev.data 就是服务端每个 SSE event 的 data 内容（通常是 JSON 字符串）
+          const obj = JSON.parse(ev.data)
+          if (obj.type === 'meta') console.log(obj.messageId)
+          if (obj.type === 'delta') appendDelta(obj.content)
+          if (obj.type === 'done') ac.abort()
+        },
+
+        onerror(err) {
+          console.error(err)
+        }
+      })
+    } catch (e: unknown) {
+      // abort 属于正常取消，不提示错误
+      if (e instanceof Error && e.name !== 'AbortError') {
+        assistantMsg.content += `\n\n[请求失败] ${e?.message ?? String(e)}`
+      }
+    } finally {
+      if (currentAbortController === ac) currentAbortController = null
+      isGenerating.value = false
+    }
   }
 
   function toggleSidebar() {
@@ -124,5 +199,6 @@ export const useChatStore = defineStore('chat', () => {
     addMessage,
     sendMessage,
     toggleSidebar,
+    cancelGenerate
   }
 })
