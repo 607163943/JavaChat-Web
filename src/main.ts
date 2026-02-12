@@ -1,13 +1,11 @@
 import './assets/main.css'
-
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
 import MateChat from '@matechat/core'
-
 import '@devui-design/icons/icomoon/devui-icon.css'
+import '@/utils/time-utils'
 
 const app = createApp(App)
 

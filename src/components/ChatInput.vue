@@ -6,10 +6,12 @@ const chatStore = useChatStore()
 const inputValue = ref('')
 
 // 提交消息
+const emit = defineEmits(['submit'])
 const handleSubmit = async (text: string) => {
   const content = typeof text === 'string' ? text.trim() : inputValue.value.trim()
   if (!content || chatStore.isGenerating) return
   inputValue.value = ''
+  emit('submit', content)
   chatStore.sendMessage(content)
 }
 

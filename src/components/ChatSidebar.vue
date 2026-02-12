@@ -4,33 +4,41 @@ import IconPlus from './icons/IconPlus.vue'
 import IconChat from './icons/IconChat.vue'
 import IconTrash from './icons/IconTrash.vue'
 import IconSidebar from './icons/IconSidebar.vue'
+import { onMounted } from 'vue'
+import dayjs from 'dayjs'
 
 const chatStore = useChatStore()
 
-function handleNewChat() {
-  chatStore.createConversation()
+// 新增对话
+const handleNewChat = () => {
+  chatStore.setActiveConversation(null)
 }
 
-function handleSelectChat(id: string) {
+const handleSelectChat = (id: string) => {
   chatStore.setActiveConversation(id)
+  chatStore.loadMessages(id)
 }
 
-function handleDeleteChat(e: Event, id: string) {
+const handleDeleteChat = (e: Event, id: string) => {
   e.stopPropagation()
   chatStore.deleteConversation(id)
 }
 
-function formatTime(timestamp: number): string {
-  const date = new Date(timestamp)
-  const now = new Date()
-  const diff = now.getTime() - date.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+const formatTime = (timestamp: string): string => {
+  const date = dayjs(timestamp)
+  const now = dayjs()
+  const days = now.diff(date, 'day')
 
   if (days === 0) return '今天'
   if (days === 1) return '昨天'
   if (days < 7) return `${days}天前`
-  return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
+  return date.format('MM-DD')
 }
+
+// 数据初始化
+onMounted(() => {
+  chatStore.loadConversationList()
+})
 </script>
 
 <template>
@@ -85,7 +93,7 @@ function formatTime(timestamp: number): string {
           </div>
           <div class="flex-1 min-w-0 flex flex-col gap-0.5">
             <span class="text-[13px] text-content truncate">{{ conv.title }}</span>
-            <span class="text-[11px] text-content-muted">{{ formatTime(conv.updatedAt) }}</span>
+            <span class="text-[11px] text-content-muted">{{ formatTime(conv.updateTime) }}</span>
           </div>
           <button
             class="shrink-0 opacity-0 group-hover:opacity-100 text-content-muted p-1 rounded-md flex items-center cursor-pointer bg-transparent border-none transition-all duration-150 hover:text-danger hover:bg-danger/10"

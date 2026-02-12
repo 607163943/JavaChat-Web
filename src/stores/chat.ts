@@ -1,14 +1,22 @@
 import { ref, computed } from 'vue'
+import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
-import { chatGetConversationIdService } from '@/api/chat'
+import {
+  chatGetConversationIdService,
+  chatConversationListService,
+  chatMessageListService,
+  chatDeleteConversationService
+} from '@/api/chat'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
+import dayjs from 'dayjs'
 
 // 消息
 export interface Message {
   id: string
+  conversationId: string
   role: 'user' | 'assistant'
   content: string
-  timestamp: number
+  createTime: string
 }
 
 // 对话
@@ -16,8 +24,8 @@ export interface Conversation {
   id: string
   title: string
   messages: Message[]
-  createdAt: number
-  updatedAt: number
+  createTime: string
+  updateTime: string
 }
 
 export const useChatStore = defineStore('chat', () => {
@@ -49,38 +57,48 @@ export const useChatStore = defineStore('chat', () => {
   })
 
   const sortedConversations = computed(() => {
-    return [...conversations.value].sort((a, b) => b.updatedAt - a.updatedAt)
+    return [...conversations.value].sort((a, b) => dayjs(b.updateTime).diff(dayjs(a.updateTime)))
   })
 
-  const generateId = (): string => {
-    return Date.now().toString(36) + Math.random().toString(36).substring(2, 8)
+  // 加载对话列表
+  const loadConversationList = async () => {
+    const res = await chatConversationListService()
+    // 除去message[]之外的属性填充
+    conversations.value = res.data.data.map((item) => ({
+      id: item.id,
+      title: item.title,
+      messages: [],
+      createTime: item.createTime,
+      updateTime: item.updateTime
+    }))
   }
 
   // 创建对话
-  const createConversation = async (firstMessage?: string): Promise<string> => {
+  const createConversation = async (): Promise<string> => {
     // 获取对话id
     const res = await chatGetConversationIdService()
     const id = res.data.data
-    const now = Date.now()
+    const now = dayjs().format('YYYY-MM-DD HH:mm:ss')
     const conversation: Conversation = {
       id,
-      title: firstMessage
-        ? firstMessage.slice(0, 30) + (firstMessage.length > 30 ? '...' : '')
-        : '新对话',
+      title: '新对话',
       messages: [],
-      createdAt: now,
-      updatedAt: now
+      createTime: now,
+      updateTime: now
     }
     conversations.value.unshift(conversation)
     activeConversationId.value = id
     return id
   }
 
-  function setActiveConversation(id: string) {
+  // 设置当前激活对话
+  const setActiveConversation = (id: string | null) => {
     activeConversationId.value = id
   }
 
-  function deleteConversation(id: string) {
+  // 删除对话
+  const deleteConversation = async (id: string) => {
+    await chatDeleteConversationService(id)
     const index = conversations.value.findIndex((c) => c.id === id)
     if (index !== -1) {
       conversations.value.splice(index, 1)
@@ -90,24 +108,35 @@ export const useChatStore = defineStore('chat', () => {
     }
   }
 
-  // 添加聊天气泡
-  const addMessage = (conversationId: string, role: 'user' | 'assistant', content: string) => {
+  // 加载消息列表
+  const loadMessages = async (conversationId: string) => {
+    const res = await chatMessageListService(conversationId)
+
     const conversation = conversations.value.find((c) => c.id === conversationId)
     if (!conversation) return
+    conversation.messages = res.data.data
+  }
 
-    const message: Message = {
-      id: generateId(),
+  // 添加消息气泡
+  const addMessage = (
+    conversationId: string,
+    role: 'user' | 'assistant',
+    content: string
+  ): Ref<Message> | null => {
+    const conversation = conversations.value.find((c) => c.id === conversationId)
+    if (!conversation) return null
+
+    const message = ref<Message>({
+      id: '',
+      conversationId,
       role,
       content,
-      timestamp: Date.now()
-    }
-    conversation.messages.push(message)
-    conversation.updatedAt = Date.now()
+      createTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    })
+    conversation.messages.push(message.value)
+    conversation.updateTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
-    // 更新标题（取第一条用户消息）
-    if (role === 'user' && conversation.messages.filter((m) => m.role === 'user').length === 1) {
-      conversation.title = content.slice(0, 30) + (content.length > 30 ? '...' : '')
-    }
+    return message
   }
 
   // 发送用户请求消息
@@ -116,10 +145,10 @@ export const useChatStore = defineStore('chat', () => {
     cancelGenerate()
     let conversationId = activeConversationId.value
     if (!conversationId) {
-      conversationId = await createConversation(content)
+      conversationId = await createConversation()
     }
 
-    addMessage(conversationId, 'user', content)
+    const userMessage = addMessage(conversationId, 'user', content)
     isGenerating.value = true
 
     // AI回复
@@ -130,14 +159,15 @@ export const useChatStore = defineStore('chat', () => {
     }
 
     // 关键：先插入一条 assistant 占位消息，后续不断追加 content
-    const assistantMsg: Message = {
-      id: generateId(),
+    const assistantMsg = ref<Message>({
+      id: '',
+      conversationId,
       role: 'assistant',
       content: '',
-      timestamp: Date.now()
-    }
-    conversation.messages.push(assistantMsg)
-    conversation.updatedAt = Date.now()
+      createTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    })
+    conversation.messages.push(assistantMsg.value)
+    conversation.updateTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
 
     const ac = new AbortController()
     currentAbortController = ac
@@ -145,12 +175,9 @@ export const useChatStore = defineStore('chat', () => {
     try {
       const appendDelta = (delta: string) => {
         if (!delta) return
-        conversation.updatedAt = Date.now()
+        conversation.updateTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
         // 找到会话中旧聊天记录进行内容更新
-        const messages = conversation.messages.filter((m) => m.id === assistantMsg.id)[0]
-        if (messages) {
-          messages.content += delta
-        }
+        assistantMsg.value.content += delta
       }
 
       await fetchEventSource('/api/chat', {
@@ -158,11 +185,18 @@ export const useChatStore = defineStore('chat', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ conversationId, prompt: content }),
         signal: ac.signal,
+        // 关键：后台/切出时仍保持 SSE 连接不断流
+        openWhenHidden: true,
 
         onmessage(ev) {
           // ev.data 就是服务端每个 SSE event 的 data 内容（通常是 JSON 字符串）
           const obj = JSON.parse(ev.data)
-          if (obj.type === 'meta') console.log(obj.messageId)
+          if (obj.type === 'meta') {
+            assistantMsg.value.id = obj.messageId
+            if (userMessage) {
+              userMessage.value.id = obj.userMessageId
+            }
+          }
           if (obj.type === 'delta') appendDelta(obj.content)
           if (obj.type === 'done') ac.abort()
         },
@@ -174,15 +208,79 @@ export const useChatStore = defineStore('chat', () => {
     } catch (e: unknown) {
       // abort 属于正常取消，不提示错误
       if (e instanceof Error && e.name !== 'AbortError') {
-        assistantMsg.content += `\n\n[请求失败] ${e?.message ?? String(e)}`
+        assistantMsg.value.content += `\n\n[请求失败] ${e?.message ?? String(e)}`
       }
     } finally {
       if (currentAbortController === ac) currentAbortController = null
       isGenerating.value = false
+
+      // 第一轮对话完毕让AI生成总结标题
+      if (conversation.messages.length === 2) {
+        await createConversationTitle()
+      }
     }
   }
 
-  function toggleSidebar() {
+  // 总结对话标题
+  const createConversationTitle = async () => {
+    // 如果正在生成，先取消上一次（避免并发串台）
+    cancelGenerate()
+    // 获取对话id，没有直接结束
+    const conversationId = activeConversationId.value
+    if (!conversationId) {
+      return
+    }
+
+    // AI回复
+    const conversation = conversations.value.find((c) => c.id === conversationId)
+    if (!conversation) {
+      return
+    }
+
+    const ac = new AbortController()
+    currentAbortController = ac
+
+    // 清空旧标题
+    conversation.title = ''
+    try {
+      const appendDelta = (delta: string) => {
+        if (!delta) return
+        conversation.updateTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
+        // 找到会话中旧聊天记录进行内容更新
+        conversation.title += delta
+      }
+
+      await fetchEventSource('/api/chat/title', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversationId }),
+        signal: ac.signal,
+        // 关键：后台/切出时仍保持 SSE 连接不断流
+        openWhenHidden: true,
+
+        onmessage(ev) {
+          // ev.data 就是服务端每个 SSE event 的 data 内容（通常是 JSON 字符串）
+          const obj = JSON.parse(ev.data)
+          if (obj.type === 'delta') appendDelta(obj.content)
+          if (obj.type === 'done') ac.abort()
+        },
+
+        onerror(err) {
+          console.error(err)
+        }
+      })
+    } catch (e: unknown) {
+      // abort 属于正常取消，不提示错误
+      if (e instanceof Error && e.name !== 'AbortError') {
+        conversation.title = '新对话'
+      }
+    } finally {
+      if (currentAbortController === ac) currentAbortController = null
+    }
+  }
+
+  // 切换侧边栏
+  const toggleSidebar = () => {
     sidebarOpen.value = !sidebarOpen.value
   }
 
@@ -193,12 +291,15 @@ export const useChatStore = defineStore('chat', () => {
     sortedConversations,
     sidebarOpen,
     isGenerating,
+    loadConversationList,
+    loadMessages,
     createConversation,
     setActiveConversation,
     deleteConversation,
     addMessage,
     sendMessage,
     toggleSidebar,
-    cancelGenerate
+    cancelGenerate,
+    createConversationTitle
   }
 })
