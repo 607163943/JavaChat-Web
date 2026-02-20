@@ -5,7 +5,7 @@
 > 这里是JavaChat的前端项目，后端项目请移步 [JavaChat-Server](https://github.com/607163943/JavaChat-Server)。
 ---
 
-## ✨ 功能特性（MVP）
+## ✨ 功能特性
 
 - [x] 会话创建 / 列表 / 切换
 - [x] 消息发送与展示（User / Assistant）
@@ -13,6 +13,7 @@
 - [x] 会话上下文（基于 ChatMemory / MessageChatMemoryAdvisor）
 - [x] 消息持久化（MySQL）
 - [x] API 文档（Knife4j）
+- [x] 双色主题切换
 
 ---
 
@@ -60,12 +61,16 @@ pnpm dev
 
 - Chat 页面
 
+![](./images/home-light.jpeg)
+
+
 ![](./images/home.jpeg)
 
 
+![](./images/chat-light.jpeg)
+
 
 ![](./images/chat.jpeg)
-
 ------
 
 ## 🤝 贡献

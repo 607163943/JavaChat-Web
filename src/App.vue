@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { useChatStore } from '@/stores/chat'
+import { useThemeStore } from '@/stores/theme'
 import ChatSidebar from '@/components/ChatSidebar.vue'
 import IconSidebar from '@/components/icons/IconSidebar.vue'
+import IconSun from '@/components/icons/IconSun.vue'
+import IconMoon from '@/components/icons/IconMoon.vue'
 import { RouterView } from 'vue-router'
 
 const chatStore = useChatStore()
+const themeStore = useThemeStore()
 </script>
 
 <template>
@@ -34,14 +38,24 @@ const chatStore = useChatStore()
             AI
           </span>
         </div>
-        <div class="flex items-center gap-2">
-          <div
-            class="w-2 h-2 rounded-full transition-colors duration-150"
-            :class="chatStore.isGenerating ? 'bg-primary animate-pulse-dot' : 'bg-ok'"
-          />
-          <span class="text-[13px] text-content-muted">
-            {{ chatStore.isGenerating ? '思考中...' : '在线' }}
-          </span>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2">
+            <div
+              class="w-2 h-2 rounded-full transition-colors duration-150"
+              :class="chatStore.isGenerating ? 'bg-primary animate-pulse-dot' : 'bg-ok'"
+            />
+            <span class="text-[13px] text-content-muted">
+              {{ chatStore.isGenerating ? '思考中...' : '在线' }}
+            </span>
+          </div>
+          <button
+            class="w-9 h-9 flex items-center justify-center rounded-[10px] text-content-dim cursor-pointer hover:text-content hover:bg-surface-hover transition-colors duration-150"
+            :title="themeStore.isDark() ? '切换到亮色模式' : '切换到暗色模式'"
+            @click="themeStore.toggleTheme"
+          >
+            <IconMoon v-if="themeStore.isDark()" />
+            <IconSun v-else />
+          </button>
         </div>
       </header>
 

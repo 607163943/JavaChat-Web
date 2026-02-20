@@ -5,6 +5,13 @@
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JavaChat - AI 智能助手</title>
+    <script>
+      ;(function () {
+        var t = localStorage.getItem('javachat-theme')
+        if (!t) t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+        document.documentElement.setAttribute('data-theme', t)
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
