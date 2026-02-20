@@ -1,12 +1,12 @@
 import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import { defineStore } from 'pinia'
+import { chatMessageListService } from '@/api/chat-message'
 import {
-  chatGetConversationIdService,
   chatConversationListService,
-  chatMessageListService,
-  chatDeleteConversationService
-} from '@/api/chat'
+  chatDeleteConversationService,
+  chatGetConversationIdService
+} from '@/api/conversation'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import dayjs from 'dayjs'
 
@@ -33,6 +33,17 @@ export const useChatStore = defineStore('chat', () => {
   const conversations = ref<Conversation[]>([])
   // 当前激活对话id
   const activeConversationId = ref<string | null>(null)
+  // 文件上传列表Id集合
+  const uploadFileIds = ref<string[]>([])
+  // 添加上传列表Id
+  const addUploadFileId = (id: string) => {
+    uploadFileIds.value.push(id)
+  }
+  // 移除上传列表Id
+  const removeUploadFileId = (id: string) => {
+    uploadFileIds.value = uploadFileIds.value.filter((item: string) => item !== id)
+  }
+
   // 侧边栏是否打开
   const sidebarOpen = ref(true)
   // 是否正在生成
@@ -183,7 +194,11 @@ export const useChatStore = defineStore('chat', () => {
       await fetchEventSource('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ conversationId, prompt: content }),
+        body: JSON.stringify({
+          conversationId,
+          prompt: content,
+          uploadFileIds: uploadFileIds.value
+        }),
         signal: ac.signal,
         // 关键：后台/切出时仍保持 SSE 连接不断流
         openWhenHidden: true,
@@ -288,6 +303,9 @@ export const useChatStore = defineStore('chat', () => {
     conversations,
     activeConversationId,
     activeConversation,
+    uploadFileIds,
+    addUploadFileId,
+    removeUploadFileId,
     sortedConversations,
     sidebarOpen,
     isGenerating,
